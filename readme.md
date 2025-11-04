@@ -13,3 +13,4 @@ A lightweight, dark-themed Solana token explorer for the **Money God One (MGO)**
 - Dark minimal design styled like BscScan
 
 ## 🪙 Default Token
+4bvgPRkTMnqRuHxFpCJQ4YpQj6i7cJkYehMjM2qNpump
