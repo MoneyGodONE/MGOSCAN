@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MGO (Money God One) Blockchain — MGOSCAN</title>
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <style>
+    :root{
+      --bg:#0b0f14;--panel:#10171f;--muted:#96a0a8;--accent:#00ffa3;--border:rgba(255,255,255,0.08);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#e6eef3;}
+    header{
+      background:#0f141a;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;gap:12px;padding:12px 20px;
+    }
+    header img{width:38px;height:38px;border-radius:50%;}
+    header .title{font-weight:700;font-size:18px;}
+    header .subtitle{font-size:12px;color:var(--muted);margin-top:2px;}
+    .wrap{max-width:1100px;margin:0 auto;padding:20px;}
+    .controls{margin-bottom:20px;display:flex;gap:8px;}
+    input[type=text]{background:var(--panel);border:1px solid var(--border);color:#e6eef3;
+      padding:10px 12px;border-radius:8px;flex:1;}
+    button{background:var(--accent);border:none;color:#000;padding:10px 12px;border-radius:8px;font-weight:600;cursor:pointer;}
+    .grid{display:grid;grid-template-columns:1fr 420px;gap:18px;}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;box-shadow:0 6px 18px rgba(0,0,0,0.4);}
+    .small{font-size:13px;color:var(--muted);}
+    table{width:100%;border-collapse:collapse;font-size:13px;}
+    th,td{padding:8px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.04);}
+    th{color:var(--muted);}
+    .mono{font-family:ui-monospace,monospace;font-size:13px;}
+    a{color:var(--accent);text-decoration:none;}
+    footer{margin-top:30px;color:var(--muted);font-size:12px;text-align:center;padding-bottom:30px;}
+    .loader{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.05);border-top-color:var(--accent);animation:spin 1s linear infinite;margin-left:6px;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:950px){.grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <header>
+    <img src="assets/logo.png" alt="MGO Logo">
+    <div>
+      <div class="title">MGOSCAN</div>
+      <div class="subtitle">A scan original</div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="controls">
+      <input id="mintInput" type="text" value="4bvgPRkTMnqRuHxFpCJQ4YpQj6i7cJkYehMjM2qNpump" placeholder="Enter Solana token mint">
+      <button id="loadBtn">Load</button>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card">
+          <div><b>Token Mint:</b> <span id="mintMono" class="mono"></span></div>
+          <div style="margin-top:8px;">
+            <div>Total Supply: <b id="supply">—</b></div>
+            <div>Decimals: <b id="decimals">—</b></div>
+            <div>Holders: <b id="holdersCount">—</b></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <b>Top Holders</b>
+          <table id="holdersTable" style="margin-top:10px;">
+            <thead><tr><th>#</th><th>Account</th><th>Balance</th><th>%</th></tr></thead>
+            <tbody><tr><td colspan="4" class="small">Loading...</td></tr></tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <b>Recent Transactions</b>
+          <div id="txList" style="margin-top:10px;font-size:13px;">Loading...</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <b>Mint Info</b>
+          <pre id="mintInfo" class="mono" style="margin-top:10px;max-height:300px;overflow:auto;">—</pre>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <b>Raw JSON (RPC)</b>
+          <div style="display:flex;align-items:center;margin:6px 0;">
+            <button id="refreshBtn" style="background:#222;color:#ccc;padding:6px 8px;font-size:12px;border:1px solid var(--border);border-radius:6px;">Refresh</button>
+            <div id="loader"></div>
+          </div>
+          <pre id="rawJson" class="mono" style="max-height:250px;overflow:auto;">—</pre>
+        </div>
+      </div>
+    </div>
+
+    <footer>Powered by public Solana RPC. Built for <b>MGO (Money God One)</b> — MGOSCAN ©2025</footer>
+  </div>
+
+<script>
+const RPC = 'https://solana-cors.allthatnode.com/'; // CORS-enabled
+const mintInput = document.getElementById('mintInput');
+const short = (s,l=8)=>s?s.slice(0,l)+'…'+s.slice(-6):'—';
+
+async function rpc(method,params){
+  const res = await fetch(RPC,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})});
+  return res.json();
+}
+async function load(mint){
+  document.getElementById('mintMono').textContent=mint;
+  document.getElementById('loader').innerHTML='<div class=\"loader\"></div>';
+  try{
+    const [supply,holders,info,sigs]=await Promise.all([
+      rpc('getTokenSupply',[mint]),
+      rpc('getTokenLargestAccounts',[mint]),
+      rpc('getAccountInfo',[mint,{encoding:'jsonParsed'}]),
+      rpc('getSignaturesForAddress',[mint,{limit:10}])
+    ]);
+    const val=supply.result.value;
+    const decimals=val.decimals;
+    const total=Number(val.amount);
+    document.getElementById('supply').textContent=(total/(10**decimals)).toLocaleString();
+    document.getElementById('decimals').textContent=decimals;
+    document.getElementById('holdersCount').textContent=holders.result.value.length;
+    document.getElementById('mintInfo').textContent=JSON.stringify(info.result,null,2);
+    document.getElementById('rawJson').textContent=JSON.stringify({supply:supply.result,holders:holders.result,info:info.result,sigs:sigs.result},null,2);
+
+    // Holders table
+    const tbody=document.querySelector('#holdersTable tbody');tbody.innerHTML='';
+    holders.result.value.slice(0,10).forEach((h,i)=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${i+1}</td><td class=\"mono\">${short(h.address)}</td><td>${(h.uiAmountString)}</td><td>${((h.amount/total)*100).toFixed(4)}%</td>`;
+      tbody.appendChild(tr);
+    });
+
+    // TX list
+    const txList=document.getElementById('txList');txList.innerHTML='';
+    for(const s of sigs.result){
+      const div=document.createElement('div');
+      div.innerHTML=`<div class=\"mono\">${short(s.signature)}</div><div class=\"small\">${new Date(s.blockTime*1000).toLocaleString()} — <a href=\"https://solscan.io/tx/${s.signature}\" target=\"_blank\">view</a></div>`;
+      div.style.borderBottom='1px solid rgba(255,255,255,0.04)';
+      div.style.padding='6px 0';
+      txList.appendChild(div);
+    }
+  }catch(e){console.error(e);}
+  document.getElementById('loader').innerHTML='';
+}
+document.getElementById('loadBtn').onclick=()=>load(mintInput.value.trim());
+document.getElementById('refreshBtn').onclick=()=>load(mintInput.value.trim());
+load(mintInput.value.trim());
+</script>
+</body>
+</html>
