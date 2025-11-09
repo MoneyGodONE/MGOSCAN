@@ -3,14 +3,14 @@ import TokenInfoCard from "./components/TokenInfoCard";
 import HoldersTable from "./components/HoldersTable";
 import Footer from "./components/Footer";
 
-type Holder = {
+export type Holder = {
   tokenAccount: string;
   owner: string | null;
   amount: string;
   rawAmount: string;
 };
 
-type TokenData = {
+export type TokenData = {
   mint: string;
   name?: string | null;
   symbol?: string | null;
@@ -23,7 +23,7 @@ type TokenData = {
   updated: string;
 };
 
-export default function App() {
+const App: React.FC = () => {
   const [token, setToken] = useState<TokenData>({
     mint: "",
     holders: [],
@@ -73,4 +73,6 @@ export default function App() {
       </footer>
     </div>
   );
-}
+};
+
+export default App;
