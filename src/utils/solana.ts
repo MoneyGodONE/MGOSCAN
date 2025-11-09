@@ -1,6 +1,8 @@
 import { Connection, PublicKey } from '@solana/web3.js';
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 
+// Example
+const parsedData = (account.data as any).parsed; 
 
 export async function fetchTokenSummary(connection: Connection, mint: string) {
 const mpk = new PublicKey(mint);
