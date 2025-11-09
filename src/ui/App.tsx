@@ -37,4 +37,22 @@ return (
 </div>
 
 
-<div className="grid
+<div className="gridreturn (
+  <div className="min-h-screen bg-gradient-to-b from-[#0a0a1a] to-[#1a1a3d] text-gray-200">
+    <header className="text-center py-8">
+      <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-600">
+        MGO Token Scanner
+      </h1>
+      <p className="text-sm text-gray-400 mt-2">Live blockchain and market data</p>
+    </header>
+
+    <main className="max-w-6xl mx-auto px-4 grid gap-8 md:grid-cols-2">
+      <TokenInfoCard token={token} />
+      <HoldersTable holders={token.holders} />
+    </main>
+
+    <Footer />
+  </div>
+);
+
+  export default App;
