@@ -1,14 +1,7 @@
 import React from "react";
+import { Holder } from "../App";
 
-type Holder = {
-  tokenAccount: string;
-  owner: string | null;
-  amount: string;
-};
-
-type Props = {
-  holders: Holder[];
-};
+type Props = { holders: Holder[] };
 
 const HoldersTable: React.FC<Props> = ({ holders }) => (
   <table className="w-full text-left border-collapse">
