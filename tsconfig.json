@@ -12,3 +12,16 @@
 },
 "include": ["src"]
 }
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "target": "esnext",
+    "module": "esnext",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
+
