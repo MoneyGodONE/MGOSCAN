@@ -9,3 +9,13 @@ const Footer: React.FC<Props> = ({ updated }) => (
 );
 
 export default Footer;
+
+type FooterProps = { updated: string };
+
+const Footer: React.FC<FooterProps> = ({ updated }) => (
+  <div>Last Updated: {updated || "N/A"}</div>
+);
+
+export default Footer;
+
+
