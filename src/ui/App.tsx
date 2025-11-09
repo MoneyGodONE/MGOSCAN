@@ -31,20 +31,19 @@ export default function App() {
   });
   const [loading, setLoading] = useState(true);
 
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const res = await fetch("/data/mgo.json");
-      const data = await res.json();
-      setToken(data);
-    } catch (err) {
-      console.error("Failed to fetch data:", err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch("/data/mgo.json");
+        const data: TokenData = await res.json();
+        setToken(data);
+      } catch (err) {
+        console.error("Failed to fetch data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchData();
   }, []);
 
