@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+<<<<<<< HEAD
   build: {
     outDir: 'dist',
     rollupOptions: {
@@ -13,4 +14,6 @@ export default defineConfig({
   define: {
     'process.env': process.env
   }
+=======
+>>>>>>> 7e87fcf (Fix: install @vercel/node)
 });
