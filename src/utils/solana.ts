@@ -1,7 +1,14 @@
 import { Connection, PublicKey } from '@solana/web3.js';
 import { deserializeMetadata } from '@metaplex-foundation/mpl-token-metadata';
 
-export async function fetchTokenSummary(connection: Connection, mint: string) {
+// ✅ Use your Solscan RPC key from .env (set in Vercel later)
+const RPC_URL =
+  import.meta.env.VITE_SOLANA_RPC ||
+  'https://api.mainnet-beta.solana.com'; // fallback public RPC
+
+export const connection = new Connection(RPC_URL, 'confirmed');
+
+export async function fetchTokenSummary(mint: string) {
   const mpk = new PublicKey(mint);
   const supply = await connection.getTokenSupply(mpk);
   const decimals = supply.value?.decimals ?? null;
@@ -9,17 +16,16 @@ export async function fetchTokenSummary(connection: Connection, mint: string) {
   return { decimals, amountRaw };
 }
 
-export async function fetchLargestAccounts(connection: Connection, mint: string, limit = 20) {
+export async function fetchLargestAccounts(mint: string, limit = 20) {
   const m = new PublicKey(mint);
   const res = await connection.getTokenLargestAccounts(m);
   const list = (res?.value || [])
     .slice(0, limit)
-    .map(x => ({ address: x.address.toBase58(), amount: x.amount }));
+    .map((x) => ({ address: x.address.toBase58(), amount: x.amount }));
   return list;
 }
 
 export async function resolveOwners(
-  connection: Connection,
   accounts: { address: string; amount: string }[],
   decimals: number | null
 ) {
@@ -53,7 +59,7 @@ export async function resolveOwners(
   return out;
 }
 
-export async function fetchMetadata(connection: Connection, mint: string) {
+export async function fetchMetadata(mint: string) {
   try {
     const mintPub = new PublicKey(mint);
     const PROGRAM_ID = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
@@ -65,21 +71,20 @@ export async function fetchMetadata(connection: Connection, mint: string) {
     const acct = await connection.getAccountInfo(pda);
     if (!acct) return { name: null, symbol: null };
 
-    // ✅ FIX: new RpcAccount-compatible structure
+    // ✅ RpcAccount-like structure for deserializeMetadata
     const rpcAccount: any = {
       executable: acct.executable,
       owner: acct.owner,
       lamports: BigInt(acct.lamports),
       data: acct.data,
       rentEpoch: BigInt(acct.rentEpoch ?? 0),
-      space: BigInt(acct.data?.length ?? 0), // <-- required in newer @solana/web3.js
+      space: BigInt(acct.data?.length ?? 0),
     };
 
-    // Deserialize metadata
     const md = deserializeMetadata(rpcAccount);
     if (!md) return { name: null, symbol: null };
     return { name: md.name?.trim() || null, symbol: md.symbol?.trim() || null };
-  } catch (e) {
+  } catch {
     return { name: null, symbol: null };
   }
 }
