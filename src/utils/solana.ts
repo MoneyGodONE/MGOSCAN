@@ -1,4 +1,4 @@
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey, AccountInfo } from '@solana/web3.js';
 import { deserializeMetadata } from '@metaplex-foundation/mpl-token-metadata';
 
 export async function fetchTokenSummary(connection: Connection, mint: string) {
@@ -58,9 +58,18 @@ export async function fetchMetadata(connection: Connection, mint: string) {
     const acct = await connection.getAccountInfo(pda);
     if (!acct) return { name: null, symbol: null };
 
-    const md = deserializeMetadata(acct.data);
-    if (!md || !md.data) return { name: null, symbol: null };
-    return { name: md.data.name?.trim() || null, symbol: md.data.symbol?.trim() || null };
+    // Construct RpcAccount-like object for compatibility
+    const rpcAccount = {
+      executable: acct.executable,
+      owner: acct.owner,
+      lamports: BigInt(acct.lamports),
+      data: acct.data,
+      rentEpoch: BigInt(acct.rentEpoch ?? 0)
+    };
+
+    const md = deserializeMetadata(rpcAccount);
+    if (!md) return { name: null, symbol: null };
+    return { name: md.name?.trim() || null, symbol: md.symbol?.trim() || null };
   } catch (e) {
     return { name: null, symbol: null };
   }
