@@ -1,7 +1,6 @@
 // api/scanner.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { Connection, PublicKey } from '@solana/web3.js';
-import { getTokenMetadata } from '../src/utils/solana';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
