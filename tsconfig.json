@@ -4,7 +4,9 @@
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "module": "ESNext",
     "skipLibCheck": true,
-    "types": ["node", "vite/client"],
+
+    // ADD THESE
+    "types": ["node", "@vercel/node", "vite/client"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -29,7 +31,7 @@
   },
   "include": [
     "src",
-    "src/index.ts"
+    "api"
   ],
   "exclude": [
     "node_modules",
