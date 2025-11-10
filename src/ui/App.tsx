@@ -7,7 +7,7 @@ export type Holder = {
   tokenAccount: string;
   owner: string | null;
   amount: string;
-  rawAmount: string;
+  rawAmount?: string;
 };
 
 export type TokenData = {
