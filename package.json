@@ -9,16 +9,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "axios": "^1.5.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.7",
-    "@types/react-dom": "^18.2.4",
-    "@types/react/jsx-runtime": "^18.0.11",
-    "typescript": "^5.2.2",
-    "vite": "^5.2.0",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.2",
+    "typescript": "^5.5.3",
+    "vite": "^5.4.8",
     "tailwindcss": "^3.4.5",
     "postcss": "^8.4.30",
     "autoprefixer": "^10.4.14"
