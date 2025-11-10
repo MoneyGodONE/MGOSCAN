@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "types": ["vite/client"],
+    "moduleResolution": "node",
     "target": "ESNext",
     "module": "ESNext",
     "lib": ["DOM", "ESNext"],
