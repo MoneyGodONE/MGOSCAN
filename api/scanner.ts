@@ -1,6 +1,5 @@
 // api/scanner.ts
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { Connection } from '@solana/web3.js';
 import fetch from 'cross-fetch';
 import {
   fetchTokenSummary,
@@ -10,11 +9,7 @@ import {
 } from '../src/utils/solana';
 import type { TokenData } from '../src/types';
 
-// Use env vars safely
-const RPC = process.env.RPC_URL || 'https://api.mainnet-beta.solana.com';
 const MINT = process.env.MINT || '4bvgPRkTMnqRuHxFpCJQ4YpQj6i7cJkYehMjM2qNpump';
-
-const conn = new Connection(RPC);
 
 async function fetchCoinGeckoPrice() {
   try {
@@ -44,10 +39,11 @@ function formatAmount(amountRaw: string, decimals: number): string {
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    const summary = await fetchTokenSummary(conn, MINT);
-    const largest = await fetchLargestAccounts(conn, MINT, 20);
-    const holders = await resolveOwners(conn, largest, summary.decimals);
-    const meta = await fetchMetadata(conn, MINT);
+    // SỬA: Không truyền `conn` nữa
+    const summary = await fetchTokenSummary(MINT);
+    const largest = await fetchLargestAccounts(MINT, 20);
+    const holders = await resolveOwners(largest, summary.decimals);
+    const meta = await fetchMetadata(MINT);
     const cg = await fetchCoinGeckoPrice();
 
     const now = new Date().toISOString();
@@ -71,7 +67,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     res.status(200).json(data);
   } catch (err: any) {
-    console.error('Error in /api/scanner:', err);
-    res.status(500).json({ error: err.message || 'Internal server error' });
+    console.error('Lỗi API:', err);
+    res.status(500).json({ error: err.message || 'Lỡ có gì đó sai rồi' });
   }
 }
