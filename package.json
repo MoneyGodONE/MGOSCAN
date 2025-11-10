@@ -15,6 +15,7 @@
   "devDependencies": {
     "@types/react": "^18.2.7",
     "@types/react-dom": "^18.2.4",
+    "@types/react/jsx-runtime": "^18.0.11",
     "typescript": "^5.2.2",
     "vite": "^5.2.0",
     "tailwindcss": "^3.4.5",
