@@ -1,17 +1,16 @@
 {
-  "name": "mgoscan-scanner",
-  "type": "module",
+  "name": "mgoscan",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc --noEmit && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@metaplex-foundation/mpl-token-metadata": "^3.2.1",
-    "@solana/web3.js": "^1.95.6",
+    "@solana/web3.js": "^1.95.3",
     "axios": "^1.7.7",
     "cross-fetch": "^4.0.0",
     "react": "^18.3.1",
@@ -21,31 +20,15 @@
     "@types/node": "^22.7.6",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
+    "@vercel/node": "^3.2.5",
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
     "typescript": "^5.6.3",
     "vite": "^5.4.8"
-=======
-    "@metaplex-foundation/mpl-token-metadata": "^3.4.0",
-    "@solana/web3.js": "^1.98.4",
-    "axios": "^1.5.0",
-    "cross-fetch": "^4.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
   },
-  "devDependencies": {
-    "@types/node": "^24.10.0",
-    "@types/react": "^18.2.7",
-    "@types/react-dom": "^18.2.4",
-    "@vercel/node": "^5.5.5",
-    "@vitejs/plugin-react": "^5.0.0",
-    "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.30",
-    "tailwindcss": "^3.4.5",
-    "typescript": "^5.2.2",
-    "vite": "^5.2.0"
->>>>>>> 99203d2 (Add missing deps/types for Solana/Node and fix TS errors)
+  "engines": {
+    "node": ">=20.0.0"
   }
 }
