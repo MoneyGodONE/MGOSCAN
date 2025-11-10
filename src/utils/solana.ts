@@ -1,12 +1,15 @@
 import { Connection, PublicKey } from '@solana/web3.js';
 import { deserializeMetadata } from '@metaplex-foundation/mpl-token-metadata';
 
-// ✅ Use your Solscan RPC key from .env (set in Vercel later)
+// ✅ Use environment variable safely (Vite or Node)
 const RPC_URL =
-  import.meta.env.VITE_SOLANA_RPC ||
-  'https://api.mainnet-beta.solana.com'; // fallback public RPC
+  (typeof import.meta !== 'undefined' &&
+    (import.meta as any).env?.VITE_SOLANA_RPC) ||
+  process.env.VITE_SOLANA_RPC ||
+  'https://api.mainnet-beta.solana.com';
 
-export const connection = new Connection(RPC_URL, 'confirmed');
+// ✅ Connection (no commitment param in v2)
+export const connection = new Connection(RPC_URL);
 
 export async function fetchTokenSummary(mint: string) {
   const mpk = new PublicKey(mint);
