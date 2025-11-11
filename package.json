@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "start": "node dist/index.js" // This runs the compiled JS
     "preview": "vite preview"
   },
   "dependencies": {
