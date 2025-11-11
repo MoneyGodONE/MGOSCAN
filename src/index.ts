@@ -5,8 +5,6 @@ import { Connection } from '@solana/web3.js';
 import { fetchTokenSummary, fetchLargestAccounts, resolveOwners, fetchMetadata } from './utils/solana';
 import type { TokenData } from './types';
 
-"start": "node dist/index.js"
-
 // ✅ Environment variables and defaults
 const RPC = process.env.RPC_URL || 'https://api.mainnet-beta.solana.com';
 const MINT = process.env.MINT || '4bvgPRkTMnqRuHxFpCJQ4YpQj6i7cJkYehMjM2qNpump';
