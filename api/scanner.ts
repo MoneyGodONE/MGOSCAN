@@ -76,4 +76,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error('API Error:', err);
     res.status(500).json({ error: err.message || 'Something went wrong' });
   }
-}
+        }
