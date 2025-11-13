@@ -2,28 +2,7 @@ import React, { useEffect, useState } from "react";
 import TokenInfoCard from "./ui/components/TokenInfoCard";
 import HoldersTable from "./ui/components/HoldersTable";
 import Footer from "./ui/components/Footer";
-
-// Minimal backend Holder type
-export interface Holder {
-  tokenAccount: string;
-  owner: string;
-  rawAmount: string;
-}
-
-// TokenData type
-export interface TokenData {
-  mint: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-  totalSupplyRaw: string;
-  totalSupply: string;
-  holders: Holder[];
-  price_usd: number;
-  market_cap_usd: number;
-  price_updated: string;
-  updated: string;
-}
+import type { TokenData } from "./types"; // <- use shared types
 
 const App: React.FC = () => {
   const [token, setToken] = useState<TokenData | null>(null);
@@ -40,7 +19,11 @@ const App: React.FC = () => {
       {token ? (
         <>
           <TokenInfoCard data={token} />
-          <HoldersTable holders={token.holders} decimals={token.decimals} totalSupplyRaw={token.totalSupplyRaw} />
+          <HoldersTable
+            holders={token.holders}
+            decimals={token.decimals ?? 0}
+            totalSupplyRaw={token.totalSupplyRaw ?? "0"}
+          />
           <Footer updated={token.updated} />
         </>
       ) : (
