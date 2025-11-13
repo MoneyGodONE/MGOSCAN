@@ -47,7 +47,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const cg = await fetchCoinGeckoPrice();
     const now = new Date().toISOString();
 
-    // Map backend holders strictly to Holder type
+    // Minimal Holder type
     const holdersMapped: Holder[] = holders.slice(0, 20).map(h => ({
       tokenAccount: h.tokenAccount ?? "",
       owner: h.owner ?? "",
@@ -76,4 +76,4 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error('API Error:', err);
     res.status(500).json({ error: err.message || 'Something went wrong' });
   }
-        }
+}
