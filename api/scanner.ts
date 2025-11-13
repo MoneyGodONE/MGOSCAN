@@ -12,7 +12,7 @@ export type Holder = {
   tokenAccount: string;
   owner: string | null;
   rawAmount: string;
-  amount: string; // formatted string with decimals
+  amount: string;
   percent: string;
 };
 
@@ -30,7 +30,7 @@ export type TokenData = {
   updated: string;
 };
 
-// Helper to format amount
+// format raw amount into decimal string
 function formatAmount(amountRaw: string, decimals: number): string {
   const big = BigInt(amountRaw);
   const denom = 10n ** BigInt(decimals);
@@ -44,24 +44,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const mintPubkey = new PublicKey(MINT);
 
-    // Fetch total supply
+    console.log('Fetching total supply...');
     const supplyInfo = await connection.getTokenSupply(mintPubkey);
     const decimals = supplyInfo.value.decimals;
     const totalSupplyRaw = supplyInfo.value.amount;
     const totalSupply = formatAmount(totalSupplyRaw, decimals);
+    console.log('Total supply:', totalSupply, 'Raw:', totalSupplyRaw, 'Decimals:', decimals);
 
-    // Fetch largest accounts
+    console.log('Fetching largest accounts...');
     const largestAccounts = await connection.getTokenLargestAccounts(mintPubkey);
+    console.log('Largest accounts:', largestAccounts.value.map(a => a.address.toBase58()));
 
-    // Resolve holders
-    const uiTotalSupply = Number(totalSupply); // approximate for percent calculation
+    const uiTotalSupply = Number(totalSupply) || 1; // avoid division by zero
+
+    console.log('Resolving holder owners...');
     const holders: Holder[] = await Promise.all(
       largestAccounts.value.slice(0, 20).map(async (acc) => {
         let owner: string | null = null;
         try {
           const tokenAccount = await getAccount(connection, acc.address);
           owner = tokenAccount.owner.toBase58();
-        } catch {
+        } catch (err) {
+          console.warn('Failed to get owner for', acc.address.toBase58(), err);
           owner = null;
         }
         const rawAmount = acc.amount;
@@ -77,13 +81,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       })
     );
 
-    // Fetch price via Jupiter API
+    // fetch price from Jupiter
     let price_usd = 0;
     try {
       const resJup = await axios.get(`https://price.jup.ag/v6/price?ids=${MINT}`, { timeout: 5000 });
       price_usd = resJup.data.data[MINT]?.price || 0;
-    } catch {
-      price_usd = 0;
+    } catch (err) {
+      console.warn('Jupiter price fetch failed:', err);
     }
 
     const now = new Date().toISOString();
@@ -102,11 +106,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       updated: now,
     };
 
+    console.log('Returning token data:', data);
+
+    // safe return
     res.status(200).json(data);
   } catch (err) {
     console.error('Scanner function failed:', err);
 
-    // Fallback fake data to avoid 500
+    // fallback JSON so frontend still works
     const now = new Date().toISOString();
     res.status(200).json({
       mint: 'TEST',
