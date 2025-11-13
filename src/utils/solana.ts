@@ -98,4 +98,24 @@ export async function resolveOwners(accounts: HolderAccount[], uiTotalSupply: nu
 }
 
 // Combined function
-export async function get
+export async function getTokenData() {
+  const MINT_STR = process.env.MINT || '4bvgPRkTMnqRuHxFpCJQ4YpQj6i7cJkYehMjM2qNpump';
+  const mint = new PublicKey(MINT_STR);
+
+  const metadata = await fetchMetadata(mint);
+  const summary = await fetchTokenSummary(mint, MINT_STR);
+  const accounts = await fetchLargestAccounts(mint);
+  const uiTotalSupply = summary.totalSupply / 10 ** summary.decimals;
+  const resolvedHolders = await resolveOwners(accounts, uiTotalSupply);
+  const holders = resolvedHolders.slice(0, 20);
+
+  return {
+    mint: MINT_STR,
+    ...metadata,
+    decimals: summary.decimals,
+    totalSupply: summary.totalSupply.toLocaleString('vi-VN'),
+    holders,
+    price_usd: summary.price_usd,
+    updated: new Date().toISOString(),
+  };
+}
