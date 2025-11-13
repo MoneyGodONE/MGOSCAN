@@ -3,16 +3,14 @@ import TokenInfoCard from "./ui/components/TokenInfoCard";
 import HoldersTable from "./ui/components/HoldersTable";
 import Footer from "./ui/components/Footer";
 
-// Backend holder type
+// Minimal backend Holder type
 export interface Holder {
   tokenAccount: string;
   owner: string;
   rawAmount: string;
-  amount: number; // computed for frontend
-  percent: string; // computed for frontend
 }
 
-// Token data type
+// TokenData type
 export interface TokenData {
   mint: string;
   name: string;
@@ -42,7 +40,7 @@ const App: React.FC = () => {
       {token ? (
         <>
           <TokenInfoCard data={token} />
-          <HoldersTable holders={token.holders} />
+          <HoldersTable holders={token.holders} decimals={token.decimals} totalSupplyRaw={token.totalSupplyRaw} />
           <Footer updated={token.updated} />
         </>
       ) : (
