@@ -3,7 +3,7 @@ import TokenInfoCard from './ui/components/TokenInfoCard';
 import HoldersTable from './ui/components/HoldersTable';
 import Footer from './ui/components/Footer';
 
-interface Holder {
+interface FrontendHolder {
   address: string;
   amount: number;
   percent: string;
@@ -15,7 +15,7 @@ interface TokenData {
   symbol: string | null;
   decimals: number | null;
   totalSupply: string | null;
-  holders: Holder[];
+  holders: FrontendHolder[];
   price_usd: number | null;
   market_cap_usd?: number | null;
   price_updated?: string | null;
