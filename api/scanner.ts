@@ -5,12 +5,18 @@ import {
   fetchLargestAccounts,
   resolveOwners,
   fetchMetadata,
-  connection,
-} from '../src/utils/solana'; // relative to api folder
+} from '../src/utils/solana';
 import { PublicKey } from '@solana/web3.js';
 import type { TokenData } from '../src/types';
 
 const MINT = process.env.MINT || '4bvgPRkTMnqRuHxFpCJQ4YpQj6i7cJkYehMjM2qNpump';
+
+// Frontend holder type
+interface FrontendHolder {
+  address: string;
+  amount: number;
+  percent: string;
+}
 
 async function fetchCoinGeckoPrice() {
   try {
@@ -49,11 +55,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const cg = await fetchCoinGeckoPrice();
     const now = new Date().toISOString();
 
-    // Map holders for frontend
-    const holdersMapped = holders
+    // Map backend holders to frontend holders
+    const holdersMapped: FrontendHolder[] = holders
       .slice(0, 20)
       .map(holder => ({
-        address: holder.address,
+        address: holder.owner, // or holder.tokenAccount if you prefer
         amount: holder.rawAmount ? Number(holder.rawAmount) / 10 ** summary.decimals : 0,
         percent:
           holder.rawAmount && summary.amountRaw
