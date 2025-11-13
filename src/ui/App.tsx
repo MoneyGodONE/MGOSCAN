@@ -2,28 +2,7 @@ import React, { useEffect, useState } from "react";
 import TokenInfoCard from "./components/TokenInfoCard";
 import HoldersTable from "./components/HoldersTable";
 import Footer from "./components/Footer";
-
-// Minimal backend Holder type
-export interface Holder {
-  tokenAccount: string;
-  owner: string;
-  rawAmount: string;
-}
-
-// TokenData type
-export interface TokenData {
-  mint: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-  totalSupplyRaw: string;
-  totalSupply: string;
-  holders: Holder[];
-  price_usd: number;
-  market_cap_usd: number;
-  price_updated: string;
-  updated: string;
-}
+import type { TokenData, Holder } from "../types";
 
 const AppUI: React.FC = () => {
   const [token, setToken] = useState<TokenData | null>(null);
@@ -36,14 +15,14 @@ const AppUI: React.FC = () => {
 
   return (
     <div className="app-container">
-      <h1>MGO UI Scan</h1>
+      <h1>MGO Scan</h1>
       {token ? (
         <>
           <TokenInfoCard data={token} />
           <HoldersTable
             holders={token.holders}
-            decimals={token.decimals}
-            totalSupplyRaw={token.totalSupplyRaw}
+            decimals={token.decimals ?? 0}
+            totalSupplyRaw={token.totalSupplyRaw ?? "0"}
           />
           <Footer updated={token.updated} />
         </>
