@@ -3,7 +3,7 @@ import TokenInfoCard from "./components/TokenInfoCard";
 import HoldersTable from "./components/HoldersTable";
 import Footer from "./components/Footer";
 
-// Minimal Holder type
+// Minimal backend Holder type
 export interface Holder {
   tokenAccount: string;
   owner: string;
