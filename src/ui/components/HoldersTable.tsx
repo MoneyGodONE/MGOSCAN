@@ -10,14 +10,16 @@ const HoldersTable: React.FC<Props> = ({ holders }) => (
         <th>Account</th>
         <th>Owner</th>
         <th>Amount</th>
+        <th>Percent</th>
       </tr>
     </thead>
     <tbody>
       {holders.map((h, idx) => (
         <tr key={idx}>
           <td>{h.tokenAccount}</td>
-          <td>{h.owner || "N/A"}</td>
+          <td>{h.owner}</td>
           <td>{h.amount}</td>
+          <td>{h.percent}</td>
         </tr>
       ))}
     </tbody>
