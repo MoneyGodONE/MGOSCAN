@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import TokenInfoCard from "./components/TokenInfoCard";
 import HoldersTable from "./components/HoldersTable";
 import Footer from "./components/Footer";
-import type { TokenData } from "../../types";
+import type { TokenData } from "../types"; // <- correct import
 
 const AppUI: React.FC = () => {
   const [token, setToken] = useState<TokenData | null>(null);
