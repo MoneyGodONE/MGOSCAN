@@ -1,8 +1,10 @@
+// src/types.ts
 export type Holder = {
   tokenAccount: string;
   owner: string | null;
   rawAmount: string;
   amount: string; // formatted with decimals
+  percent: string;
 };
 
 export type TokenData = {
