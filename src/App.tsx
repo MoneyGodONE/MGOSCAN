@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import TokenInfoCard from './components/TokenInfoCard'; // Adjust path if needed
-import HoldersTable from './components/HoldersTable'; // Adjust path if needed
-import Footer from './components/Footer'; // Adjust path if needed
+import TokenInfoCard from './ui/components/TokenInfoCard';
+import HoldersTable from './ui/components/HoldersTable';
+import Footer from './ui/components/Footer';
 
-// Define TokenData based on your API response (from solana.ts)
+interface Holder {
+  address: string;
+  amount: number;
+  percent: string;
+}
+
 interface TokenData {
   mint: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-  totalSupply: string;
-  holders: Array<{
-    address: string;
-    amount: number;
-    percent: string;
-  }>;
-  price_usd: number;
+  name: string | null;
+  symbol: string | null;
+  decimals: number | null;
+  totalSupply: string | null;
+  holders: Holder[];
+  price_usd: number | null;
+  market_cap_usd?: number | null;
+  price_updated?: string | null;
   updated: string;
 }
 
@@ -33,9 +36,9 @@ const App: React.FC = () => {
       <h1>MGO Scan</h1>
       {token ? (
         <>
-          <TokenInfoCard data={token} /> {/* Pass token data as prop */}
-          <HoldersTable holders={token.holders} /> {/* Pass holders as prop */}
-          <Footer updated={token.updated} /> {/* Pass updated as prop */}
+          <TokenInfoCard data={token} />
+          <HoldersTable holders={token.holders} />
+          <Footer updated={token.updated} />
         </>
       ) : (
         <p>Loading token data...</p>
