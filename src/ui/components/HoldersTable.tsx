@@ -1,5 +1,5 @@
 import React from "react";
-import type { Holder } from "../types";
+import type { Holder } from "../../types";
 
 interface Props {
   holders: Holder[];
