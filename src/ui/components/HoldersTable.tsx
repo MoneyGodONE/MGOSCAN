@@ -1,5 +1,5 @@
 import React from "react";
-import { Holder } from "../App";
+import type { Holder } from "../types";
 
 interface Props {
   holders: Holder[];
@@ -8,8 +8,6 @@ interface Props {
 }
 
 const HoldersTable: React.FC<Props> = ({ holders, decimals, totalSupplyRaw }) => {
-  const formatAmount = (raw: string) => (Number(raw) / 10 ** decimals).toLocaleString();
-
   const formatPercent = (raw: string) =>
     totalSupplyRaw ? ((Number(raw) / Number(totalSupplyRaw)) * 100).toFixed(2) + "%" : "0%";
 
@@ -27,8 +25,8 @@ const HoldersTable: React.FC<Props> = ({ holders, decimals, totalSupplyRaw }) =>
         {holders.map((h, idx) => (
           <tr key={idx}>
             <td>{h.tokenAccount}</td>
-            <td>{h.owner}</td>
-            <td>{formatAmount(h.rawAmount)}</td>
+            <td>{h.owner ?? "N/A"}</td>
+            <td>{h.amount}</td>
             <td>{formatPercent(h.rawAmount)}</td>
           </tr>
         ))}
