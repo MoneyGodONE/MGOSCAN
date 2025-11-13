@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import TokenInfoCard from "./ui/components/TokenInfoCard";
-import HoldersTable from "./ui/components/HoldersTable";
-import Footer from "./ui/components/Footer";
+import TokenInfoCard from "./components/TokenInfoCard";
+import HoldersTable from "./components/HoldersTable";
+import Footer from "./components/Footer";
 
-// Minimal backend Holder type
+// Minimal Holder type
 export interface Holder {
   tokenAccount: string;
   owner: string;
@@ -25,7 +25,7 @@ export interface TokenData {
   updated: string;
 }
 
-const App: React.FC = () => {
+const AppUI: React.FC = () => {
   const [token, setToken] = useState<TokenData | null>(null);
 
   useEffect(() => {
@@ -36,11 +36,15 @@ const App: React.FC = () => {
 
   return (
     <div className="app-container">
-      <h1>MGO Scan</h1>
+      <h1>MGO UI Scan</h1>
       {token ? (
         <>
           <TokenInfoCard data={token} />
-          <HoldersTable holders={token.holders} decimals={token.decimals} totalSupplyRaw={token.totalSupplyRaw} />
+          <HoldersTable
+            holders={token.holders}
+            decimals={token.decimals}
+            totalSupplyRaw={token.totalSupplyRaw}
+          />
           <Footer updated={token.updated} />
         </>
       ) : (
@@ -50,4 +54,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default AppUI;
