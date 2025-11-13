@@ -1,13 +1,15 @@
+tsx
+
 import React, { useEffect, useState } from "react";
 import TokenInfoCard from "./components/TokenInfoCard";
 import HoldersTable from "./components/HoldersTable";
 import Footer from "./components/Footer";
 
+// Updated Holder type to match expected data from API (based on solana.ts structure)
 export type Holder = {
-  tokenAccount: string;
-  owner: string | null;
-  amount: string;
-  rawAmount?: string;
+  address: string;
+  amount: number;
+  percent: string;
 };
 
 export type TokenData = {
@@ -35,7 +37,10 @@ const App: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await fetch("/data/mgo.json");
+        const res = await fetch("/api/scanner");
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
         const data: TokenData = await res.json();
         setToken(data);
       } catch (err) {
@@ -76,3 +81,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+
