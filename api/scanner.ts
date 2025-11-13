@@ -20,8 +20,8 @@ async function fetchCoinGeckoPrice() {
     const j = await res.json();
     if (!j[id]) return null;
     return {
-      price_usd: j[id].usd ?? null,
-      market_cap_usd: j[id].usd_market_cap ?? null,
+      price_usd: j[id].usd ?? 0,
+      market_cap_usd: j[id].usd_market_cap ?? 0,
     };
   } catch {
     return null;
@@ -47,17 +47,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const cg = await fetchCoinGeckoPrice();
     const now = new Date().toISOString();
 
-    // Ensure all backend Holder fields exist
+    // Map backend holders strictly to Holder type
     const holdersMapped: Holder[] = holders.slice(0, 20).map(h => ({
       tokenAccount: h.tokenAccount ?? "",
       owner: h.owner ?? "",
       rawAmount: h.rawAmount ?? "0",
-      // extra computed fields for frontend display
-      amount: h.rawAmount ? Number(h.rawAmount) / 10 ** summary.decimals : 0,
-      percent:
-        h.rawAmount && summary.totalSupply
-          ? ((Number(h.rawAmount) / Number(summary.totalSupply)) * 100).toFixed(2) + '%'
-          : '0%',
     }));
 
     const data: TokenData = {
