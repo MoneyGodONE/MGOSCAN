@@ -42,32 +42,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const mintPubkey = new PublicKey(MINT);
     const summary = await fetchTokenSummary(mintPubkey, MINT);
     const accounts = await fetchLargestAccounts(mintPubkey);
-    const holders = await resolveOwners(accounts, summary.totalSupply / 10 ** summary.decimals);
+    const holdersRaw = await resolveOwners(accounts, summary.totalSupply / 10 ** summary.decimals);
     const meta = await fetchMetadata(mintPubkey);
     const cg = await fetchCoinGeckoPrice();
     const now = new Date().toISOString();
 
-    // Minimal Holder type
-    const holdersMapped: Holder[] = holders.slice(0, 20).map(h => ({
-      tokenAccount: h.tokenAccount ?? "",
-      owner: h.owner ?? "",
-      rawAmount: h.rawAmount ?? "0",
-    }));
+    // Map holders to match your Holder type
+    const holders: Holder[] = holdersRaw.slice(0, 20).map(h => {
+      const amount = h.rawAmount && summary.decimals !== null
+        ? formatAmount(h.rawAmount, summary.decimals)
+        : "0";
+      return {
+        tokenAccount: h.tokenAccount ?? "",
+        owner: h.owner ?? null,
+        rawAmount: h.rawAmount ?? "0",
+        amount,
+      };
+    });
 
     const data: TokenData = {
       mint: MINT,
-      name: meta.name ?? "MGO",
-      symbol: meta.symbol ?? "MGO",
-      decimals: summary.decimals ?? 0,
-      totalSupplyRaw: summary.amountRaw ?? "0",
+      name: meta.name ?? null,
+      symbol: meta.symbol ?? null,
+      decimals: summary.decimals ?? null,
+      totalSupplyRaw: summary.amountRaw ?? null,
       totalSupply:
         summary.amountRaw && summary.decimals !== null
           ? formatAmount(summary.amountRaw, summary.decimals)
-          : "0",
-      holders: holdersMapped,
-      price_usd: cg?.price_usd ?? 0,
-      market_cap_usd: cg?.market_cap_usd ?? 0,
-      price_updated: cg ? now : now,
+          : null,
+      holders,
+      price_usd: cg?.price_usd ?? null,
+      market_cap_usd: cg?.market_cap_usd ?? null,
+      price_updated: cg ? now : null,
       updated: now,
     };
 
