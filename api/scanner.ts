@@ -7,16 +7,9 @@ import {
   fetchMetadata,
 } from '../src/utils/solana';
 import { PublicKey } from '@solana/web3.js';
-import type { TokenData } from '../src/types';
+import type { Holder, TokenData } from '../src/types';
 
 const MINT = process.env.MINT || '4bvgPRkTMnqRuHxFpCJQ4YpQj6i7cJkYehMjM2qNpump';
-
-// Frontend holder type
-interface FrontendHolder {
-  address: string;
-  amount: number;
-  percent: string;
-}
 
 async function fetchCoinGeckoPrice() {
   try {
@@ -49,38 +42,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const mintPubkey = new PublicKey(MINT);
     const summary = await fetchTokenSummary(mintPubkey, MINT);
     const accounts = await fetchLargestAccounts(mintPubkey);
-    const uiTotalSupply = summary.totalSupply / 10 ** summary.decimals;
-    const holders = await resolveOwners(accounts, uiTotalSupply);
+    const holders = await resolveOwners(accounts, summary.totalSupply / 10 ** summary.decimals);
     const meta = await fetchMetadata(mintPubkey);
     const cg = await fetchCoinGeckoPrice();
     const now = new Date().toISOString();
 
-    // Map backend holders to frontend holders
-    const holdersMapped: FrontendHolder[] = holders
-      .slice(0, 20)
-      .map(holder => ({
-        address: holder.owner, // or holder.tokenAccount if you prefer
-        amount: holder.rawAmount ? Number(holder.rawAmount) / 10 ** summary.decimals : 0,
-        percent:
-          holder.rawAmount && summary.amountRaw
-            ? ((Number(holder.rawAmount) / Number(summary.amountRaw)) * 100).toFixed(2) + '%'
-            : '0%',
-      }));
+    // Ensure all backend Holder fields exist
+    const holdersMapped: Holder[] = holders.slice(0, 20).map(h => ({
+      tokenAccount: h.tokenAccount ?? "",
+      owner: h.owner ?? "",
+      rawAmount: h.rawAmount ?? "0",
+      // extra computed fields for frontend display
+      amount: h.rawAmount ? Number(h.rawAmount) / 10 ** summary.decimals : 0,
+      percent:
+        h.rawAmount && summary.totalSupply
+          ? ((Number(h.rawAmount) / Number(summary.totalSupply)) * 100).toFixed(2) + '%'
+          : '0%',
+    }));
 
     const data: TokenData = {
       mint: MINT,
-      name: meta.name ?? null,
-      symbol: meta.symbol ?? null,
-      decimals: summary.decimals ?? null,
-      totalSupplyRaw: summary.amountRaw ?? null,
+      name: meta.name ?? "MGO",
+      symbol: meta.symbol ?? "MGO",
+      decimals: summary.decimals ?? 0,
+      totalSupplyRaw: summary.amountRaw ?? "0",
       totalSupply:
         summary.amountRaw && summary.decimals !== null
           ? formatAmount(summary.amountRaw, summary.decimals)
-          : null,
+          : "0",
       holders: holdersMapped,
-      price_usd: cg?.price_usd ?? null,
-      market_cap_usd: cg?.market_cap_usd ?? null,
-      price_updated: cg ? now : null,
+      price_usd: cg?.price_usd ?? 0,
+      market_cap_usd: cg?.market_cap_usd ?? 0,
+      price_updated: cg ? now : now,
       updated: now,
     };
 
