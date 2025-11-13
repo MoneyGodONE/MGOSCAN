@@ -1,5 +1,5 @@
 import React from "react";
-import type { TokenData } from "../types";
+import type { TokenData } from "../../types";
 
 type Props = { data: TokenData };
 
