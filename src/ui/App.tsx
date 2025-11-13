@@ -1,14 +1,13 @@
-tsx
-
 import React, { useEffect, useState } from "react";
 import TokenInfoCard from "./components/TokenInfoCard";
 import HoldersTable from "./components/HoldersTable";
 import Footer from "./components/Footer";
 
-// Updated Holder type to match expected data from API (based on solana.ts structure)
 export type Holder = {
-  address: string;
-  amount: number;
+  tokenAccount: string;
+  owner: string | null;
+  amount: string;
+  rawAmount?: string;
   percent: string;
 };
 
@@ -81,4 +80,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
