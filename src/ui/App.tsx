@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
-import TokenInfoCard from "./components/TokenInfoCard";
-import HoldersTable from "./components/HoldersTable";
-import Footer from "./components/Footer";
+import TokenInfoCard from "./ui/components/TokenInfoCard";
+import HoldersTable from "./ui/components/HoldersTable";
+import Footer from "./ui/components/Footer";
 
-// Same types as App.tsx
+// Minimal backend Holder type
 export interface Holder {
   tokenAccount: string;
   owner: string;
   rawAmount: string;
-  amount: number;
-  percent: string;
 }
 
+// TokenData type
 export interface TokenData {
   mint: string;
   name: string;
@@ -26,7 +25,7 @@ export interface TokenData {
   updated: string;
 }
 
-const AppUI: React.FC = () => {
+const App: React.FC = () => {
   const [token, setToken] = useState<TokenData | null>(null);
 
   useEffect(() => {
@@ -37,11 +36,11 @@ const AppUI: React.FC = () => {
 
   return (
     <div className="app-container">
-      <h1>MGO UI Scan</h1>
+      <h1>MGO Scan</h1>
       {token ? (
         <>
           <TokenInfoCard data={token} />
-          <HoldersTable holders={token.holders} />
+          <HoldersTable holders={token.holders} decimals={token.decimals} totalSupplyRaw={token.totalSupplyRaw} />
           <Footer updated={token.updated} />
         </>
       ) : (
@@ -51,4 +50,4 @@ const AppUI: React.FC = () => {
   );
 };
 
-export default AppUI;
+export default App;
